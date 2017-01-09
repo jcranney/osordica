@@ -6,6 +6,7 @@ import numpy as np
 import pygame
 import sys
 import warnings
+import lookup
 #import RPi.GPIO as GPIO
 
 # need 10 digitals to be used as keys:
@@ -137,9 +138,8 @@ def stretch(snd_array, factor, window_size, h):
     return result.astype('int16')
 
 
-def pitchshift(snd_array, n, base, window_size=2**13, h=2**11):
+def pitchshift(snd_array, factor, base, window_size=2**13, h=2**11):
     """ Changes the pitch of a sound by ``n`` semitones. """
-    factor = 2**(1.0 * n / base)
     stretched = stretch(snd_array, 1.0/factor, window_size, h)
     return speedx(stretched[window_size:], factor)
     
@@ -148,6 +148,9 @@ def pitchshift(snd_array, n, base, window_size=2**13, h=2**11):
 #    Main
 #
 
+def bin2dec(bin):
+    mult = [2**(n) for n in range(len(bin))]
+    return sum(np.multiply(bin,mult))
 
 def main():
     # Parse command line arguments
@@ -158,11 +161,10 @@ def main():
         warnings.simplefilter('ignore')
 
     fps, sound = wavfile.read(args.wav.name)
-
-    tones = range(-25, 25)
+    factor = lookup.factors
     sys.stdout.write('Transponding sound file... ')
     sys.stdout.flush()
-    transposed_sounds = [pitchshift(sound, n, args.base) for n in tones]
+    transposed_sounds = [pitchshift(sound, lookup.factors[x], args.base) for x in lookup.factors.keys()]
     print('DONE')
 
     # So flexible ;)
@@ -171,10 +173,12 @@ def main():
     screen = pygame.display.set_mode((150, 150))
     # this is not to be used as keyboard but as digital io's
     # probably no need to keep pygame but until it is completely unused i wont remove it
-    keys = args.keyboard.read().split('\n')
+    # keys = args.keyboard.read().split('\n')
+    
     sounds = map(pygame.sndarray.make_sound, transposed_sounds)
-    key_sound = dict(zip(keys, sounds))
-    is_playing = {k: False for k in keys}
+    
+    key_sound = dict(zip(lookup.factors.keys(), sounds))
+    is_playing = {k: False for k in key_sound}
 
     while True:
     
@@ -185,7 +189,13 @@ def main():
                     print("Space pressed (y)")
                     pressed = pygame.key.get_pressed()
                     comb = [pressed[fingers[x].key] for x in range(10)]
-                    
+                    dec = bin2dec(comb)
+                    print(dec)
+                    sounds_to_play = lookup.lookup_sounds(dec)
+                    for x in sounds_to_play:
+                        if (x in key_sound.keys()):# and (not is_playing[x]):
+                            key_sound[x].play(fade_ms=50)
+                            #is_playing[x] = True
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
             
@@ -227,14 +237,13 @@ def main():
   #          # Stops with 50ms fadeout
    #         key_sound[key].fadeout(50)
     #        is_playing[key] = False
-
-
+    
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
         print('Goodbye')
-        
+    
 #need to map raspberrypi io's
 
 #need to load audio sample file
