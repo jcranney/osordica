@@ -9,7 +9,7 @@ import warnings
 #import RPi.GPIO as GPIO
 
 # need 10 digitals to be used as keys:
-# L0 is left pinky, R4 is right thumb etc
+# L0 is left pinky, R4 is right pinky etc
 #
 #   Finger |  Pin  | GPIOnum
 #     L0   |   11  |   17
@@ -27,20 +27,41 @@ import warnings
 #
 #	Strum  |   7   |    4  
 #
+# Or keyboard implementation for testing/debugging
+#   
+#   Finger |       Key 
+#     L0   |   K_a
+#     L1   |   K_s
+#     L2   |   K_d
+#     L3   |   K_f 
+#     L4   |   K_v
+#     R0   |   K_n
+#     R1   |   K_j
+#     R2   |   K_k 
+#     R3   |   K_l 
+#     R4   |   K_SEMICOLON
+#
+#   Strum  |   K_SPACE
+#
+
+
+
 
 class Button:
-	"""Button variable class for keyboard buttons"""
-	pressed = 0
-	def __init__(self,finger,pin,GPIOnum):
-		self.finger = finger
-		self.pin = pin
-		self.GPIOnum = GPIOnum
+    """Button variable class for keyboard buttons"""
+    pressed = 0
+    def __init__(self,finger,pin,GPIOnum,key):
+        self.finger = finger
+        self.pin = pin
+        self.GPIOnum = GPIOnum
+        self.key = key
 
 pins = [11, 13 ,15, 12, 16, 29, 31, 33, 32, 37]
 GPIOnums = [17, 27, 22, 18, 23, 5, 6, 13, 12, 26]
 finger_names = ["L0", "L1", "L2", "L3", "L4", "R0", "R1", "R2", "R3", "R4"]
-fingers = [Button(finger_names[x],pins[x],GPIOnums[x]) for x in range(10)]
-strum = Button("STRUM",7,4)
+kb_keys = [pygame.K_a,pygame.K_s,pygame.K_d,pygame.K_f,pygame.K_v,pygame.K_n,pygame.K_j,pygame.K_k,pygame.K_l,pygame.K_SEMICOLON]
+fingers = [Button(finger_names[x],pins[x],GPIOnums[x],kb_keys[x]) for x in range(10)]
+strum = Button("STRUM",7,4,pygame.K_SPACE)
 
 ################################################################
 #   
@@ -57,6 +78,12 @@ def parse_arguments():
         type=argparse.FileType('r'),
         default='bowl.wav',
         help='WAV file (default: bowl.wav)')
+    parser.add_argument(
+        '--keyboard', '-k',
+        metavar='FILE',
+        type=argparse.FileType('r'),
+        default='typewriter.kb',
+        help='keyboard file (default: typewriter.kb)')
     parser.add_argument(
         '--verbose', '-v',
         action='store_true',
@@ -150,6 +177,25 @@ def main():
     is_playing = {k: False for k in keys}
 
     while True:
+    
+        event = pygame.event.wait()
+        if event.type in (pygame.KEYDOWN, pygame.KEYUP):
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    print("Space pressed (y)")
+                    pressed = pygame.key.get_pressed()
+                    comb = [pressed[fingers[x].key] for x in range(10)]
+                    
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+            
+                #read all keys pressed
+                #determine sound from luptable
+        
+        
+        #if event.type in (pygame.KEYDOWN, pygame.KEYUP)
+        #    key = pygame.key.name(event.key)
+        
         # if strum event (strum == 1)
         # then do the things:
         # read remaining digital IO's
@@ -163,24 +209,24 @@ def main():
         
         
         
-        event = pygame.event.wait()
-
-        if event.type in (pygame.KEYDOWN, pygame.KEYUP):
-            key = pygame.key.name(event.key)
-
-        if event.type == pygame.KEYDOWN:
-            if (key in key_sound.keys()) and (not is_playing[key]):
-                key_sound[key].play(fade_ms=50)
-                is_playing[key] = True
-
-            elif event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                raise KeyboardInterrupt
-
-        elif event.type == pygame.KEYUP and key in key_sound.keys():
-            # Stops with 50ms fadeout
-            key_sound[key].fadeout(50)
-            is_playing[key] = False
+#        event = pygame.event.wait()
+#
+#        if event.type in (pygame.KEYDOWN, pygame.KEYUP):
+#            key = pygame.key.name(event.key)
+#
+#        if event.type == pygame.KEYDOWN:
+ #           if (key in key_sound.keys()) and (not is_playing[key]):
+  #              key_sound[key].play(fade_ms=50)
+   #             is_playing[key] = True
+#
+ #           elif event.key == pygame.K_ESCAPE:
+  #              pygame.quit()
+   #             raise KeyboardInterrupt
+#
+ #       elif event.type == pygame.KEYUP and key in key_sound.keys():
+  #          # Stops with 50ms fadeout
+   #         key_sound[key].fadeout(50)
+    #        is_playing[key] = False
 
 
 if __name__ == '__main__':
