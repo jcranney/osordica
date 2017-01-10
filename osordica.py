@@ -138,7 +138,7 @@ def stretch(snd_array, factor, window_size, h):
     return result.astype('int16')
 
 
-def pitchshift(snd_array, factor, base, window_size=2**13, h=2**11):
+def pitchshift(snd_array, factor, base, window_size=2**14, h=2**11):
     """ Changes the pitch of a sound by ``n`` semitones. """
     stretched = stretch(snd_array, 1.0/factor, window_size, h)
     return speedx(stretched[window_size:], factor)
@@ -168,12 +168,13 @@ def main():
     print('DONE')
 
     # So flexible ;)
-    pygame.mixer.init(fps, -16, 1, 2048)
+    pygame.mixer.init(fps, -16, 1, 4096)
     # For the focus
     screen = pygame.display.set_mode((150, 150))
     # this is not to be used as keyboard but as digital io's
     # probably no need to keep pygame but until it is completely unused i wont remove it
     # keys = args.keyboard.read().split('\n')
+    #pygame.key.set_repeat(500,500)
     
     sounds = map(pygame.sndarray.make_sound, transposed_sounds)
     
@@ -181,26 +182,28 @@ def main():
     is_playing = {k: False for k in key_sound}
 
     while True:
-    
         event = pygame.event.wait()
-        if event.type in (pygame.KEYDOWN, pygame.KEYUP):
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    print("Space pressed (y)")
-                    pressed = pygame.key.get_pressed()
-                    comb = [pressed[fingers[x].key] for x in range(10)]
-                    dec = bin2dec(comb)
-                    print(dec)
-                    sounds_to_play = lookup.lookup_sounds(dec)
-                    for x in sounds_to_play:
-                        if (x in key_sound.keys()):# and (not is_playing[x]):
-                            key_sound[x].play(fade_ms=50)
-                            #is_playing[x] = True
-                elif event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-            
-                #read all keys pressed
-                #determine sound from luptable
+        if pygame.key.get_pressed()[pygame.K_SPACE]==1:
+            if event.type in (pygame.KEYDOWN, pygame.KEYUP):
+                if event.type == pygame.KEYDOWN:
+                    #if event.key == pygame.K_SPACE:
+                        print("Space pressed (y)")
+                        pressed = pygame.key.get_pressed()
+                        comb = [pressed[fingers[x].key] for x in range(10)]
+                        print(comb)
+                        dec = bin2dec(comb)
+                        print(dec)
+                        sounds_to_play = lookup.lookup_sounds(dec)
+                        for x in sounds_to_play:
+                            if (x in key_sound.keys()):# and (not is_playing[x]):
+                                key_sound[x].play(fade_ms=50)
+                                #is_playing[x] = True
+        if hasattr(event, "key"):
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                
+                    #read all keys pressed
+                    #determine sound from luptable
         
         
         #if event.type in (pygame.KEYDOWN, pygame.KEYUP)
@@ -238,12 +241,13 @@ def main():
    #         key_sound[key].fadeout(50)
     #        is_playing[key] = False
     
+
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
         print('Goodbye')
-    
+
 #need to map raspberrypi io's
 
 #need to load audio sample file
