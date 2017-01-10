@@ -110,7 +110,7 @@ lookup_fingerpattern = {
 896: "A37th",
 769: "B37th",
 515: "C47th",
-55: "C27th",
+23: "C27th",
 62: "D27th",
 124: "E27th",
 248: "F27th",
@@ -118,14 +118,14 @@ lookup_fingerpattern = {
 944: "A27th",
 785: "B27th",
 563: "C37th",
-103: "C47th",
-110: "D47th",
-172: "E47th",
-296: "F47th",
-449: "G47th",
-62: "A47th",
+39: "C47th",
+46: "D47th",
+108: "E47th",
+232: "F47th",
+480: "G47th",
+928: "A47th",
 801: "B47th",
-0: "C47th",
+547: "C57th",
 11: "C3aug",
 70: "D3aug",
 140: "E3aug",
@@ -149,7 +149,7 @@ lookup_fingerpattern = {
 800: "G4aug",
 30: "A4aug",
 866: "B4aug",
-613: "C4aug"
+613: "C5aug"
 }
 
 def left(s, amount):
