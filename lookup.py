@@ -2,7 +2,7 @@
 # Base 12, C maj at the moment, can expand later
 #
 
-factors = {x:2**(x/12) for x in range(-18,19)}
+factors = {x:2**(x/12) for x in range(-18,29)}
 
 #Cmaj notes
 dict_notes = {  "C2":-18,
