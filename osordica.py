@@ -183,12 +183,12 @@ def main():
 
     while True:
         event = pygame.event.wait()
-        if pygame.key.get_pressed()[pygame.K_SPACE]==1:
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_SPACE]==1:
             if event.type in (pygame.KEYDOWN, pygame.KEYUP):
                 if event.type == pygame.KEYDOWN:
                     #if event.key == pygame.K_SPACE:
                         print("Space pressed (y)")
-                        pressed = pygame.key.get_pressed()
                         comb = [pressed[fingers[x].key] for x in range(10)]
                         print(comb)
                         dec = bin2dec(comb)
