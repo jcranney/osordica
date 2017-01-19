@@ -7,10 +7,10 @@ import pygame
 import sys
 import warnings
 import lookup
-import platform
+#import platform
 
-if "Raspberry" in platform.platform():  
-   import RPi.GPIO as GPIO
+#if "Raspberry" in platform.platform():  
+#   import RPi.GPIO as GPIO
 
 # need 10 digitals to be used as keys:
 # L0 is left pinky, R4 is right pinky etc
@@ -82,6 +82,7 @@ def parse_arguments():
         type=argparse.FileType('r'),
         default='bowl.wav',
         help='WAV file (default: bowl.wav)')
+    parser.add_argument('--mode','-m',help='keyboard "kb" or raspberry pi "rpi" mode. Default: kb', default='kb')
     parser.add_argument(
         '--keyboard', '-k',
         metavar='FILE',
