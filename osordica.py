@@ -122,7 +122,7 @@ def stretch(snd_array, factor, window_size, h):
 
     for i in np.arange(0, len(snd_array) - (window_size + h), round(h*factor)):
         # Two potentially overlapping subarrays
-	i = int(i);
+        i = int(i);
         a1 = snd_array[i: i + (window_size)]
         a2 = snd_array[i + h: i + window_size + h]
 
