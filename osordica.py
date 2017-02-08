@@ -96,8 +96,8 @@ def parse_arguments():
     parser.add_argument(
         '--base', '-b',
         metavar='N',
-        type=int,
-        default=12,
+        type=float,
+        default=12.0,
         help='basemode')
 
     return (parser.parse_args(), parser)
@@ -118,11 +118,12 @@ def stretch(snd_array, factor, window_size, h):
     """ Stretches/shortens a sound, by some factor. """
     phase = np.zeros(window_size)
     hanning_window = np.hanning(window_size)
-    result = np.zeros(round(len(snd_array) / factor) + window_size)
+    result = np.zeros(int(len(snd_array) / factor + window_size))
 
     for i in np.arange(0, len(snd_array) - (window_size + h), round(h*factor)):
         # Two potentially overlapping subarrays
-        a1 = snd_array[i: i + window_size]
+	i = int(i);
+        a1 = snd_array[i: i + (window_size)]
         a2 = snd_array[i + h: i + window_size + h]
 
         # The spectra of these arrays
@@ -142,7 +143,7 @@ def stretch(snd_array, factor, window_size, h):
     return result.astype('int16')
 
 
-def pitchshift(snd_array, factor, base, window_size=2**15, h=2**11):
+def pitchshift(snd_array, factor, base, window_size=int(2**15), h=int(2**11)):
     """ Changes the pitch of a sound by a factor of "factor" """
     stretched = stretch(snd_array, 1.0/factor, window_size, h)
     return speedx(stretched[window_size:], factor)
