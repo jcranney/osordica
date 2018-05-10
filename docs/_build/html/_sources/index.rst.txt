@@ -3,15 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to osordica's documentation!
-====================================
+Documentation for the Osordica Project
+======================================
+
+The *osordica* is an open source novel instrument designed to run on a Raspberry Pi. The main motivation is to have an electronic synthesiser type handheld instrument which is capable of producing notes/chords across multiple octaves without a player's fingers having to leave the keys.
+
+The osordica combines freedom of design, open sourcedness, and ergonomics in the creation of arguably the worlds worst deliberate instrument.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
+   basicusage
+   advancedusage
+   hardware
    contact
-
+   
 
 Indices and tables
 ==================
