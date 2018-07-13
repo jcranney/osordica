@@ -167,7 +167,7 @@ def right(s, amount):
 def lookup_sounds(dec_ref):
     try:
         sound = lookup_fingerpattern[dec_ref]
-        print(sound)
+    #    print(sound)
     except:
         print("Unkown Combination")
         return []

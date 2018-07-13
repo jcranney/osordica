@@ -167,8 +167,9 @@ def main():
     sys.stdout.flush()
     transposed_sounds = [pitchshift(sound, lookup.factors[x], args.base) for x in lookup.factors.keys()]
     print('DONE')
-
-    pygame.mixer.init(fps, -16, 1, 2**12)
+    
+    pygame.mixer.pre_init(fps, -16, 1, 2**9)
+    pygame.mixer.init()
     screen = pygame.display.set_mode((150, 150))
     
     sounds = map(pygame.sndarray.make_sound, transposed_sounds)
@@ -185,7 +186,7 @@ def main():
             comb = [pressed[fingers[x].key] for x in range(10)]
             #print(comb)
             dec = bin2dec(comb)
-            print(dec)
+            #print(dec)
             sounds_to_play = lookup.lookup_sounds(dec)
             for x in sounds_to_play:
                 key_sound[x].stop() # this resolves the issue of not playing a chord fast enough
